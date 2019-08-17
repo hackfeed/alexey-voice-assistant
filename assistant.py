@@ -17,6 +17,7 @@ options = {
 
 
 def speak(phrase_to_speak):
+    """ pyttsx3 saying function. """
     print(phrase_to_speak)
     speak_engine.say(phrase_to_speak)
     speak_engine.runAndWait()
@@ -24,6 +25,7 @@ def speak(phrase_to_speak):
 
 
 def callback(recognizer, audio):
+    """ Basic audio recognition. """
     try:
         voice = recognizer.recognize_google(audio, language="en-EN").lower()
         print("[log] Recognized: " + voice)
@@ -37,7 +39,6 @@ def callback(recognizer, audio):
             for option in options["to_be_removed"]:
                 command = command.replace(option, "").strip()
 
-            # распознаем и выполняем команду
             command = recognize_command(command)
             execute_command(command["command"])
 
@@ -48,6 +49,7 @@ def callback(recognizer, audio):
 
 
 def recognize_command(command):
+    """ Command recognition. """
     RC = {"command": "", "percent": 0}
     for cmd, value in options['commands'].items():
         for option in value:
@@ -60,6 +62,7 @@ def recognize_command(command):
 
 
 def execute_command(command):
+    """ Command execution. """
     if command == "current_time":
         now = datetime.datetime.now()
         speak("Now is " + str(now.hour) + ":" + str(now.minute))
@@ -68,6 +71,7 @@ def execute_command(command):
         speak("I don't know this command, could you repeate?")
 
 
+# Initialization.
 recognizer = sr.Recognizer()
 microphone = sr.Microphone(device_index=5)
 
@@ -78,6 +82,7 @@ speak_engine = pyttsx3.init()
 
 speak("Welcome, I am Alexey, how can I help you?")
 
+# Non-stop command listenning.
 stop_listening = recognizer.listen_in_background(microphone, callback)
 while True:
-    time.sleep(0.1)  # infinity loop
+    time.sleep(0.1)
